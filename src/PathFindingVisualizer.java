@@ -1,7 +1,7 @@
 package src;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Queue;
@@ -9,14 +9,47 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 public class PathFindingVisualizer extends JPanel {
+
     private final Graph graph;
     private Node start, end;
     private static final int NodeSize = 40;
-    public JFrame frame;
 
     public PathFindingVisualizer(Graph graph) {
         this.graph = graph;
         this.start = graph.getNode(0, 0);
+
+    Button DFS = new Button("Depth First Search");
+    Button BFS = new Button("Breadth First Search");
+    Button Dijsktra = new Button("Dijsktra");
+    Button Clear = new Button("Clear");
+        
+    add(DFS);
+    add(BFS);
+    add(Dijsktra);
+    add(Clear);
+
+    DFS.setBounds(0, 0, 100, 50);
+    BFS.setBounds(100, 100, 100, 50);
+    Dijsktra.setBounds(200, 200, 100, 50);
+    Clear.setBounds(300, 300, 100, 50);
+        
+    DFS.addActionListener(e -> {
+        DepthFirstSearch(graph, start, end, getGraphics());
+    });
+    
+    BFS.addActionListener(e -> {
+        BreadthFirstSearch(graph, start, end, getGraphics());
+    });
+    
+    Clear.addActionListener(e -> {
+        for(int i = 0; i < graph.getRows(); i++)
+            for(int j = 0; j < graph.getCols(); j++)
+                graph.setWall(i, j, false);
+        end = null;
+        repaint();
+    });
+
+        setFocusable(true);
 
         addMouseListener(new MouseAdapter() {
             @Override
@@ -37,41 +70,11 @@ public class PathFindingVisualizer extends JPanel {
             }
         });
 
-        addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(java.awt.event.KeyEvent e) {
-            }
-
-            @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                if(e.getKeyCode() == java.awt.event.KeyEvent.VK_D)
-                {
-                    DepthFirstSearch(graph, start, end, getGraphics());
-                }
-                else if(e.getKeyCode() == java.awt.event.KeyEvent.VK_B)
-                {
-                    BreadthFirstSearch(graph, start, end, getGraphics());
-                }
-                else if(e.getKeyCode() == java.awt.event.KeyEvent.VK_C)
-                {
-                    for(int i = 0; i < graph.getRows(); i++)
-                        for(int j = 0; j < graph.getCols(); j++)
-                            graph.setWall(i, j, false);
-                    end = null;
-                    repaint();
-                }
-            }
-
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent e) {
-
-            }
-        });
-
     }
 
     @Override
     protected void paintComponent(Graphics g) {
+        
         super.paintComponent(g);
         for (int i = 0; i < graph.getRows(); i++) {
             for (int j = 0; j < graph.getCols(); j++) {
@@ -85,15 +88,23 @@ public class PathFindingVisualizer extends JPanel {
                 } else {
                     g.setColor(Color.WHITE);
                 }
-                g.fillRect(j * NodeSize, i * NodeSize, NodeSize, NodeSize);
+                g.fillRect((j * NodeSize), (i * NodeSize), NodeSize, NodeSize);
+                //if(g.getColor() == Color.WHITE)
+                //{
+                //    g.setColor(Color.BLACK);
+                //    g.drawString(Integer.toString(node.getWeight()), (j * NodeSize), (i * NodeSize));
+                //}
                 g.setColor(Color.GRAY);
-                g.drawRect(j * NodeSize, i * NodeSize, NodeSize, NodeSize);
+                g.drawRect((j * NodeSize), (i * NodeSize), NodeSize, NodeSize);
+
             }
         }
     }
 
     public void BreadthFirstSearch(Graph graph, Node start, Node end, Graphics g)
     {
+        cleanGraph(g);
+
         Queue<Node> queue = new LinkedList<Node>();
         boolean[][] visited = new boolean[graph.getRows()][graph.getCols()];
         
@@ -126,7 +137,7 @@ public class PathFindingVisualizer extends JPanel {
                     queue.offer(neighbour);
                 }
                 try {
-                    Thread.sleep(50); 
+                    Thread.sleep(2); 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -146,6 +157,8 @@ public class PathFindingVisualizer extends JPanel {
 
     public void DepthFirstSearch(Graph graph, Node start, Node end, Graphics g)
     {
+        cleanGraph(g);
+
         Stack<Node> stack = new Stack<>();
         boolean[][] visited = new boolean[graph.getRows()][graph.getCols()];
 
@@ -178,7 +191,7 @@ public class PathFindingVisualizer extends JPanel {
                     stack.add(neighbour);
             }
                 try {
-                    Thread.sleep(50); 
+                    Thread.sleep(2); 
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -199,6 +212,27 @@ public class PathFindingVisualizer extends JPanel {
     private boolean isValid(Graph graph, int row, int col, boolean[][] visited)
     {
         return row >= 0 && row < graph.getRows() && col >= 0 && col < graph.getCols() && !graph.getNode(row, col).getWall() && !visited[row][col];
+    }
+
+    private void cleanGraph(Graphics g)
+    {
+        for(int i = 0; i < graph.getRows(); i++)
+        {
+            for(int j = 0; j < graph.getCols(); j++)
+            {
+                if(graph.getNode(i, j).getWall())
+                    g.setColor(Color.BLACK);
+                else if(graph.getNode(i, j).equals(start))
+                    g.setColor(Color.GREEN);
+                else if(graph.getNode(i, j).equals(end))
+                    g.setColor(Color.RED);
+                else
+                    g.setColor(Color.WHITE);
+                g.fillRect(j * NodeSize, i * NodeSize, NodeSize, NodeSize);
+                g.setColor(Color.GRAY);
+                g.drawRect((j * NodeSize), (i * NodeSize), NodeSize, NodeSize);
+            }
+        }
     }
 
 }

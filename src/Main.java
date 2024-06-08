@@ -2,19 +2,21 @@ package src;
 
 import javax.swing.JFrame;
 
-public class Main {
+public class Main extends JFrame {
     
+    
+
     public static void main(String[] args) {
 
-        Graph graph = new Graph(10, 10);
+        Graph graph = new Graph(24, 46);
+        JFrame frame = new JFrame();
         PathFindingVisualizer visualizer = new PathFindingVisualizer(graph);
 
-        visualizer.frame = new JFrame("Path Finding Visualizer");
-        visualizer.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        visualizer.frame.setSize(480, 500);
-        visualizer.frame.add(visualizer);
-        visualizer.frame.setVisible(true);
-        visualizer.requestFocus();
+        frame = new JFrame("Path Finding ");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(1920, 1080);
+        frame.add(visualizer);
+        frame.setVisible(true);
 
     }
 }

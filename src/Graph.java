@@ -1,6 +1,7 @@
 package src;
 
 public class Graph {
+    
     private Node[][] table;
     private int rows, cols;
     
@@ -11,7 +12,7 @@ public class Graph {
         this.table = new Node[rows][cols];
         for(int i = 0; i < rows; i++)
             for(int j = 0; j < cols; j++)
-                table[i][j] = new Node(i, j, false);
+                table[i][j] = new Node(i, j, false, 1);
     }
 
     public Node getNode(int row, int col)
