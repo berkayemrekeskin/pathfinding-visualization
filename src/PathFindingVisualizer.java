@@ -21,18 +21,21 @@ public class PathFindingVisualizer extends JPanel {
     Button DFS = new Button("Depth First Search");
     Button BFS = new Button("Breadth First Search");
     Button Dijsktra = new Button("Dijsktra");
+    Button Generate = new Button("Generate");
     Button Clear = new Button("Clear");
         
     add(DFS);
     add(BFS);
     add(Dijsktra);
+    add(Generate);
     add(Clear);
 
     DFS.setBounds(0, 0, 100, 50);
     BFS.setBounds(100, 100, 100, 50);
     Dijsktra.setBounds(200, 200, 100, 50);
-    Clear.setBounds(300, 300, 100, 50);
-        
+    Generate.setBounds(300, 300, 100, 50);
+    Clear.setBounds(400, 400, 100, 50);
+    
     DFS.addActionListener(e -> {
         DepthFirstSearch(graph, start, end, getGraphics());
     });
@@ -49,6 +52,19 @@ public class PathFindingVisualizer extends JPanel {
         repaint();
     });
 
+    Generate.addActionListener(e -> {
+        for(int i = 0; i < graph.getRows(); i++)
+            for(int j = 0; j < graph.getCols(); j++)
+            {
+                if(i == start.getRow() && j == start.getCol() || i == end.getRow() && j == end.getCol())
+                    continue;
+                graph.setWall(i, j, Math.random() < 0.3);
+            }
+        repaint();
+    });
+
+    
+
         setFocusable(true);
 
         addMouseListener(new MouseAdapter() {
@@ -58,6 +74,8 @@ public class PathFindingVisualizer extends JPanel {
                 int col = e.getX() / NodeSize;
 
                 if (SwingUtilities.isLeftMouseButton(e)) {
+                    if(row == start.getRow() && col == start.getCol() || row == end.getRow() && col == end.getCol())
+                        return;
                     graph.setWall(row, col, true);
                 } else if (SwingUtilities.isRightMouseButton(e)) {
                     graph.setWall(row, col, false);
